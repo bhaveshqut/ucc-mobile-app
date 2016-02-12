@@ -10,16 +10,33 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:weightSum="100"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="0dip"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_weight="60"
+        android:weightSum="100">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="35"
+            android:src="@drawable/logo"
+            android:scaleType="centerCrop"/>
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Username"
             android:id="@+id/txtEmail"/>
 
         <EditText
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
             android:id="@+id/txtPassword"/>
@@ -32,5 +49,5 @@
             android:id="@+id/btnLogin"/>
 
     </LinearLayout>
-
+</LinearLayout>
 </LinearLayout>
