@@ -1,5 +1,7 @@
-package com.realtimeprojects.uccmobapp;
+package ucc.com.safetyapplication;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,7 +14,15 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.firebase.client.Firebase;
+
+import java.util.Calendar;
+import java.util.Date;
+
 public class StartTrackerActivity extends AppCompatActivity {
+
+    String userId, name;
+    AlertDialog.Builder alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,7 +31,14 @@ public class StartTrackerActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        userId = getIntent().getStringExtra("userId");
+        name = getIntent().getStringExtra("name");
 
+        alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Reminder");
+        alertDialog.setMessage("Hey" + "Name\nAre you working today?");
+        alertDialog.setPositiveButton("Yes", dialogClickListener);
+        alertDialog.setNegativeButton("No", dialogClickListener);
     }
 
     @Override
@@ -44,6 +61,44 @@ public class StartTrackerActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which){
+                case DialogInterface.BUTTON_POSITIVE:
+                    //start tracking them
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    //set no, leave them alone
+                    break;
+            }
+        }
+    };
+
+    public void CheckWorking() {
+        //Firebase
+        Calendar calendar = Calendar.getInstance();
+
+        int currentHour = calendar.get(Calendar.HOUR);
+        int currentMinutes = calendar.get(Calendar.MINUTE);
+
+        if (currentHour >= 8 && currentHour >= 0) {
+            //
+        }
+
+        //so go to the db, and if isWorking = blank -> "" (don't know)
+            //and the time is 8 or past 8
+               // ask them if they're working
+
+                    //if yes
+                        //put yes
+                        //you can track
+
+
+
     }
 
     public void startTracking(View view){

@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     int loginAttempts;
     EditText emailTxt, passwordTxt;
     Button btnLogin;
+    Intent homeScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,9 +95,12 @@ public class MainActivity extends AppCompatActivity {
                         switch (permission) {
                             case "M":
                                 System.out.println("Manager logging in");
+                                //homeScreen = new Intent(this, manager_home.class); Not working...check imports...
+                                startActivity(homeScreen);
                                 break;
                             case "E":
                                 System.out.println("Employee logging in");
+                                //homeScreen = new Intent(this, StartTrackerActivity.class); Not working...check imports...
                                 break;
                         }
                     }

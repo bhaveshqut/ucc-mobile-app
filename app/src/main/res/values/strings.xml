@@ -3,4 +3,5 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_home">Home</string>
     <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_manager_home">manager_home</string>
 </resources>
