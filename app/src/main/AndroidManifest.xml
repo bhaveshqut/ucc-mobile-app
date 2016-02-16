@@ -5,6 +5,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <service
+        android:name=".FetchAddressIntentService"
+        android:exported="false"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -33,6 +37,15 @@
             android:name=".manager_home"
             android:label="@string/title_activity_manager_home"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".StartTrackerActivity"
+            android:label="@string/title_start_tracker_activity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.START_TRACKER_ACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

@@ -27,7 +27,8 @@ public class MainActivity extends AppCompatActivity {
     int loginAttempts;
     EditText emailTxt, passwordTxt;
     Button btnLogin;
-    Intent homeScreen;
+    Intent managerHome, workerHome;
+    String userId, name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
         //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         //setSupportActionBar(toolbar);
         Firebase.setAndroidContext(this);
+
+        managerHome = new Intent(this, manager_home.class);
+        workerHome = new Intent(this, StartTrackerActivity.class);// Not working...check imports...
     }
 
     @Override
@@ -81,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
         root.authWithPassword(email, password, new Firebase.AuthResultHandler() {
             @Override
-            public void onAuthenticated(AuthData authData) {
+            public void onAuthenticated(final AuthData authData) {
                 String uID = authData.getUid();
                 System.out.println("User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
 
@@ -95,12 +99,13 @@ public class MainActivity extends AppCompatActivity {
                         switch (permission) {
                             case "M":
                                 System.out.println("Manager logging in");
-                                //homeScreen = new Intent(this, manager_home.class); Not working...check imports...
-                                startActivity(homeScreen);
+                                // Not working...check imports...
+                                startActivity(managerHome);
                                 break;
                             case "E":
                                 System.out.println("Employee logging in");
-                                //homeScreen = new Intent(this, StartTrackerActivity.class); Not working...check imports...
+                                workerHome.putExtra("userId", authData.getUid());
+                                startActivity(workerHome);
                                 break;
                         }
                     }

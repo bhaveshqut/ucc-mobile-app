@@ -14,15 +14,20 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.util.Calendar;
 import java.util.Date;
 
 public class StartTrackerActivity extends AppCompatActivity {
 
-    String userId, name;
+    String userId, name; //name functionality not implemented yet
     AlertDialog.Builder alertDialog;
+    Firebase workingRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +36,17 @@ public class StartTrackerActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+
         userId = getIntent().getStringExtra("userId");
-        name = getIntent().getStringExtra("name");
+        //name = getIntent().getStringExtra("name");
+        workingRef = new Firebase("https://ucc.firebaseio.com/users/" + userId + "/working");
+
+        CheckWorking(); //needs to run every minute
 
         alertDialog = new AlertDialog.Builder(this);
         alertDialog.setTitle("Reminder");
-        alertDialog.setMessage("Hey" + "Name\nAre you working today?");
+        alertDialog.setMessage("Hey there!\nAre you working today?");
         alertDialog.setPositiveButton("Yes", dialogClickListener);
         alertDialog.setNegativeButton("No", dialogClickListener);
     }
@@ -68,37 +78,39 @@ public class StartTrackerActivity extends AppCompatActivity {
         public void onClick(DialogInterface dialog, int which) {
             switch (which){
                 case DialogInterface.BUTTON_POSITIVE:
-                    //start tracking them
+                    workingRef.setValue("Yes");
+                    //you can track, Google Maps bruh...
+                    //location will probably be moved to a separate hierarchy
                     break;
 
                 case DialogInterface.BUTTON_NEGATIVE:
-                    //set no, leave them alone
+                    workingRef.setValue("No");
                     break;
             }
         }
     };
 
     public void CheckWorking() {
-        //Firebase
         Calendar calendar = Calendar.getInstance();
+        final int currentHour = calendar.get(Calendar.HOUR); //you actually have to test this at some point, reset it once their done.
 
-        int currentHour = calendar.get(Calendar.HOUR);
-        int currentMinutes = calendar.get(Calendar.MINUTE);
+        ValueEventListener valueEventListener = workingRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Object workingStatus = dataSnapshot.getValue();
 
-        if (currentHour >= 8 && currentHour >= 0) {
-            //
-        }
+                if (workingStatus == "") {
+                    if (currentHour >= 8) {
+                        alertDialog.show();
+                    }
+                }
+            }
 
-        //so go to the db, and if isWorking = blank -> "" (don't know)
-            //and the time is 8 or past 8
-               // ask them if they're working
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
 
-                    //if yes
-                        //put yes
-                        //you can track
-
-
-
+            }
+        });
     }
 
     public void startTracking(View view){
