@@ -1,11 +1,18 @@
 package ucc.com.safetyapplication;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -19,15 +26,49 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.Api;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.PlaceDetectionApi;
 
+import java.io.FileDescriptor;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class StartTrackerActivity extends AppCompatActivity {
+       // GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     String userId, name; //name functionality not implemented yet
     AlertDialog.Builder alertDialog;
     Firebase workingRef;
+    LocationRequest mLocationRequest; //might be wrong type
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
+    boolean mRequestingLocationUpdates;
+    String mLastUpdateTime;
+    TextView t;
+    boolean isActivated;
+
+
+    TextView updated_location;
+    TextView updated_duration;
+    TextView updated_status;
+    Button updated_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +78,17 @@ public class StartTrackerActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
+        updated_location = (TextView) findViewById(R.id.txtSuburb);
+        updated_duration = (TextView) findViewById(R.id.textView4);
+        updated_status = (TextView) findViewById(R.id.textView6);
+        updated_button = (Button)findViewById(R.id.button);
 
+        //updateValuesFromBundle(savedInstanceState);
+        t = (TextView)findViewById(R.id.textView4);
         userId = getIntent().getStringExtra("userId");
         //name = getIntent().getStringExtra("name");
         workingRef = new Firebase("https://ucc.firebaseio.com/users/" + userId + "/working");
+        // Create a GoogleApiClient instance
 
         CheckWorking(); //needs to run every minute
 
@@ -49,6 +97,49 @@ public class StartTrackerActivity extends AppCompatActivity {
         alertDialog.setMessage("Hey there!\nAre you working today?");
         alertDialog.setPositiveButton("Yes", dialogClickListener);
         alertDialog.setNegativeButton("No", dialogClickListener);
+
+
+
+
+        LocationManager locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+
+        if (isActivated) {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, new android.location.LocationListener() {
+                @Override
+                public void onLocationChanged(Location location) {
+
+                    updateLocation(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+                    t.setText(String.valueOf(location.getLatitude()));
+                    getAddress(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+
+                }
+
+                @Override
+                public void onStatusChanged(String provider, int status, Bundle extras) {
+
+                }
+
+                @Override
+                public void onProviderEnabled(String provider) {
+
+                }
+
+                @Override
+                public void onProviderDisabled(String provider) {
+
+                }
+            });
+        } else {
+           // locationManager.
+        }
+    }
+
+    public void updateLocation(String lat, String lng) {
+        final Firebase locationRef = new Firebase("https://ucc.firebaseio.com/coordinates/" + userId + "/");
+
+        //if your still want updates
+        locationRef.child("lat").setValue(lat);
+        locationRef.child("lng").setValue(lng);
     }
 
     @Override
@@ -79,12 +170,14 @@ public class StartTrackerActivity extends AppCompatActivity {
             switch (which){
                 case DialogInterface.BUTTON_POSITIVE:
                     workingRef.setValue("Yes");
+                    isActivated = true;
                     //you can track, Google Maps bruh...
                     //location will probably be moved to a separate hierarchy
                     break;
 
                 case DialogInterface.BUTTON_NEGATIVE:
                     workingRef.setValue("No");
+                    isActivated = false;
                     break;
             }
         }
@@ -113,20 +206,37 @@ public class StartTrackerActivity extends AppCompatActivity {
         });
     }
 
+    public void getAddress(String lat, String lng) {
+        Geocoder geoCoder = new Geocoder(StartTrackerActivity.this, Locale.getDefault());
+
+
+        try {
+            List<Address> addressList;
+            addressList = geoCoder.getFromLocation(Double.parseDouble(lat), Double.parseDouble(lng), 2);
+            if ((addressList != null) && (addressList.size() > 0)) {
+                Address address = addressList.get(0);
+                updated_location.setText(address.getLocality());
+            }
+        } catch (java.io.IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     public void startTracking(View view){
         String location_value = "Ann Street"; //CURRENT VALUES ARE TEST CASE VALUES. VALUES TO BE RETRIEVED FROM DATABASE IN REAL TIME
         String duration_value = "00:00";
         String status_value = "At work";
         String button_value = "Go offline";
 
-        TextView updated_location = (TextView) findViewById(R.id.textView);
-        TextView updated_duration = (TextView) findViewById(R.id.textView4 );
-        TextView updated_status = (TextView) findViewById(R.id.textView6);
-        Button updated_button = (Button)findViewById(R.id.button);
-
         updated_location.setText(location_value);
         updated_duration.setText(duration_value);
         updated_status.setText(status_value);
         updated_button.setText(button_value);
+
+        if (isActivated) {
+            isActivated = false;
+        } else {
+            isActivated = true;
+        }
     }
 }
