@@ -50,7 +50,7 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class StartTrackerActivity extends AppCompatActivity {
+public class StartTrackerActivity extends AppCompatActivity implements View.OnClickListener {
        // GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     String userId, name; //name functionality not implemented yet
@@ -62,8 +62,8 @@ public class StartTrackerActivity extends AppCompatActivity {
     boolean mRequestingLocationUpdates;
     String mLastUpdateTime;
     TextView t;
-    boolean isActivated;
-
+    boolean isActivated, hasStarted = false;
+    List<Address> addressList;
 
     TextView updated_location;
     TextView updated_duration;
@@ -83,6 +83,14 @@ public class StartTrackerActivity extends AppCompatActivity {
         updated_status = (TextView) findViewById(R.id.textView6);
         updated_button = (Button)findViewById(R.id.button);
 
+
+        //What if you reload the page??
+        updated_location.setText("Unavailable");
+        updated_duration.setText("00:00");
+        updated_status.setText("At home");
+        updated_button.setText("Start");
+
+
         //updateValuesFromBundle(savedInstanceState);
         t = (TextView)findViewById(R.id.textView4);
         userId = getIntent().getStringExtra("userId");
@@ -97,9 +105,6 @@ public class StartTrackerActivity extends AppCompatActivity {
         alertDialog.setMessage("Hey there!\nAre you working today?");
         alertDialog.setPositiveButton("Yes", dialogClickListener);
         alertDialog.setNegativeButton("No", dialogClickListener);
-
-
-
 
         LocationManager locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -132,6 +137,24 @@ public class StartTrackerActivity extends AppCompatActivity {
         } else {
            // locationManager.
         }
+    }
+
+
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.button:
+
+                if (isActivated) {
+                    isActivated = false;
+                    updated_button.setText("Start");
+                } else {
+                    isActivated = true;
+                    updated_button.setText("Finish Day");
+                }
+
+                break;
+        }
+
     }
 
     public void updateLocation(String lat, String lng) {
@@ -171,6 +194,7 @@ public class StartTrackerActivity extends AppCompatActivity {
                 case DialogInterface.BUTTON_POSITIVE:
                     workingRef.setValue("Yes");
                     isActivated = true;
+                    updated_button.setText("Go Offline");
                     //you can track, Google Maps bruh...
                     //location will probably be moved to a separate hierarchy
                     break;
@@ -178,6 +202,7 @@ public class StartTrackerActivity extends AppCompatActivity {
                 case DialogInterface.BUTTON_NEGATIVE:
                     workingRef.setValue("No");
                     isActivated = false;
+                    updated_button.setText("Start");
                     break;
             }
         }
@@ -185,7 +210,7 @@ public class StartTrackerActivity extends AppCompatActivity {
 
     public void CheckWorking() {
         Calendar calendar = Calendar.getInstance();
-        final int currentHour = calendar.get(Calendar.HOUR); //you actually have to test this at some point, reset it once their done.
+        final int currentHour = calendar.get(Calendar.HOUR_OF_DAY); //you actually have to test this at some point, reset it once their done.
 
         ValueEventListener valueEventListener = workingRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -211,7 +236,7 @@ public class StartTrackerActivity extends AppCompatActivity {
 
 
         try {
-            List<Address> addressList;
+
             addressList = geoCoder.getFromLocation(Double.parseDouble(lat), Double.parseDouble(lng), 2);
             if ((addressList != null) && (addressList.size() > 0)) {
                 Address address = addressList.get(0);
@@ -222,21 +247,26 @@ public class StartTrackerActivity extends AppCompatActivity {
         }
     }
 
-    public void startTracking(View view){
+   /* public void startTracking(View view){
         String location_value = "Ann Street"; //CURRENT VALUES ARE TEST CASE VALUES. VALUES TO BE RETRIEVED FROM DATABASE IN REAL TIME
         String duration_value = "00:00";
         String status_value = "At work";
-        String button_value = "Go offline";
+        String button_value = "Start";
 
-        updated_location.setText(location_value);
-        updated_duration.setText(duration_value);
-        updated_status.setText(status_value);
-        updated_button.setText(button_value);
+        if (!hasStarted) {
 
-        if (isActivated) {
-            isActivated = false;
         } else {
-            isActivated = true;
+            if (isActivated) {
+                isActivated = false;
+                updated_button.setText("Turn Off");
+            } else {
+                isActivated = true;
+                updated_button.setText("Start");
+            }
         }
-    }
+
+
+
+
+    }*/
 }
