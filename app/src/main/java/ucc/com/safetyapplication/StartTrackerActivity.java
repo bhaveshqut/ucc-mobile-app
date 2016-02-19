@@ -50,7 +50,7 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class StartTrackerActivity extends AppCompatActivity implements View.OnClickListener {
+public class StartTrackerActivity extends AppCompatActivity {
        // GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     String userId, name; //name functionality not implemented yet
@@ -83,13 +83,24 @@ public class StartTrackerActivity extends AppCompatActivity implements View.OnCl
         updated_status = (TextView) findViewById(R.id.textView6);
         updated_button = (Button)findViewById(R.id.button);
 
-
-        //What if you reload the page??
-        updated_location.setText("Unavailable");
-        updated_duration.setText("00:00");
-        updated_status.setText("At home");
-        updated_button.setText("Start");
-
+        updated_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (v.getId() == R.id.button) {
+                    if (isActivated) {
+                        isActivated = false;
+                        updated_button.setText("Start");
+                        updated_duration.setText("00:00");
+                        updated_location.setText("Unavailable");
+                        updated_status.setText("At home");
+                    } else {
+                        isActivated = true;
+                        updated_button.setText("Turn Off");
+                        updated_status.setText("Working");
+                    }
+                }
+            }
+        });
 
         //updateValuesFromBundle(savedInstanceState);
         t = (TextView)findViewById(R.id.textView4);
@@ -108,15 +119,15 @@ public class StartTrackerActivity extends AppCompatActivity implements View.OnCl
 
         LocationManager locationManager = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
 
-        if (isActivated) {
+
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, new android.location.LocationListener() {
                 @Override
                 public void onLocationChanged(Location location) {
-
-                    updateLocation(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
-                    t.setText(String.valueOf(location.getLatitude()));
-                    getAddress(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
-
+                    if (isActivated) {
+                        updateLocation(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+                        t.setText(String.valueOf(location.getLatitude()));
+                        getAddress(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+                    }
                 }
 
                 @Override
@@ -134,27 +145,6 @@ public class StartTrackerActivity extends AppCompatActivity implements View.OnCl
 
                 }
             });
-        } else {
-           // locationManager.
-        }
-    }
-
-
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.button:
-
-                if (isActivated) {
-                    isActivated = false;
-                    updated_button.setText("Start");
-                } else {
-                    isActivated = true;
-                    updated_button.setText("Finish Day");
-                }
-
-                break;
-        }
-
     }
 
     public void updateLocation(String lat, String lng) {

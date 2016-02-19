@@ -7,7 +7,7 @@
 
     <service
         android:name=".FetchAddressIntentService"
-        android:exported="false"/>
+        android:exported="false" />
 
     <application
         android:allowBackup="true"
@@ -36,16 +36,21 @@
         <activity
             android:name=".manager_home"
             android:label="@string/title_activity_manager_home"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".StartTrackerActivity"
             android:label="@string/title_start_tracker_activity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.START_TRACKER_ACTIVITY" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Messages"
+            android:label="@string/title_activity_messages"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

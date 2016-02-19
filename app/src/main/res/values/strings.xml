@@ -5,4 +5,5 @@
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_manager_home">manager_home</string>
     <string name="title_start_tracker_activity">StartTraackerActivity</string>
+    <string name="title_activity_messages">Messages</string>
 </resources>
