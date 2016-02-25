@@ -19,9 +19,16 @@
         android:layout_height="wrap_content"
         android:text="Start"
         android:id="@+id/button"
-        android:layout_above="@+id/txtSuburb"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="101dp"
+        android:onClick="startTracking"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start"
+        android:id="@+id/btnMessages"
+        android:layout_centerHorizontal="true"
         android:onClick="startTracking"/>
 
     <TextView

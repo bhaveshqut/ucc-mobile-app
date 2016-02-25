@@ -7,28 +7,51 @@
     android:fitsSystemWindows="true"
     tools:context="ucc.com.safetyapplication.Messages">
 
-    <android.support.design.widget.AppBarLayout
+
+
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="match_parent"
+        android:weightSum="100"
+        android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <TextView
+            android:id="@+id/lblTitle"
+            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:text="Hey, this'll be a menu"
+            android:textSize="35sp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:gravity="center"/>
 
-    </android.support.design.widget.AppBarLayout>
+        <ListView
+            android:id="@+id/lvMessages"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="90"/>
 
-    <include layout="@layout/content_messages" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:orientation="horizontal"
+            android:weightSum="100">
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email" />
+            <TextView
+                android:id="@+id/txtMessage"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="80"/>
+
+            <Button
+                android:id="@+id/btnSend"
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="20"/>
+
+        </LinearLayout>
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

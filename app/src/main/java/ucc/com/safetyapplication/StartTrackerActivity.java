@@ -65,6 +65,8 @@ public class StartTrackerActivity extends AppCompatActivity {
     boolean isActivated, hasStarted = false;
     List<Address> addressList;
 
+    Button messageButton;
+
     TextView updated_location;
     TextView updated_duration;
     TextView updated_status;
@@ -77,6 +79,15 @@ public class StartTrackerActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+        messageButton = (Button)findViewById(R.id.btnMessages);
+
+        messageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), Messages.class));
+            }
+        });
 
         updated_location = (TextView) findViewById(R.id.txtSuburb);
         updated_duration = (TextView) findViewById(R.id.textView4);
