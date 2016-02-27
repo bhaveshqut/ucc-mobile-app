@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/emergencyscreencontent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:background="@color/LightGreen"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/activity_emergency_module"
+    tools:context="com.realtimeprojects.uccmobapp.EmergencyModule">
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Call Manager"
+        android:id="@+id/button2"
+        android:layout_marginTop="143dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/LightGreen"
+        android:onClick="callManager"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Call Emergency line"
+        android:id="@+id/button3"
+        android:background="@color/LightGreen"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="callEmergency"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Help and Send location"
+        android:id="@+id/button4"
+        android:background="@color/LightGreen"
+        android:layout_marginTop="42dp"
+        android:layout_below="@+id/button3"
+        android:layout_centerHorizontal="true"
+        android:onClick="sendLocation"/>
+</RelativeLayout>

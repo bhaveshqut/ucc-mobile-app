@@ -53,8 +53,8 @@ public class Messages extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+       //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
         btnSend = (Button) findViewById(R.id.btnSend);
         txtMessage = (TextView) findViewById(R.id.txtMessage);
@@ -74,7 +74,6 @@ public class Messages extends AppCompatActivity {
                           @Override
                           public void onDataChange(DataSnapshot snapshot) {
                             String text = txtMessage.getText().toString();
-
                             SmsManager.getDefault().sendTextMessage(snapshot.getValue().toString(), null,
                                     String.valueOf(txtMessage.getText()), null, null);
                             messages.add(text);
