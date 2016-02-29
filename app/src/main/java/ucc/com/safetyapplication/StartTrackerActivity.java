@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -14,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,6 +25,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,15 +52,17 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.util.Calendar;
+import java.util.Timer;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Locale;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-public class StartTrackerActivity extends AppCompatActivity implements View.OnClickListener {
+public class StartTrackerActivity extends AppCompatActivity {
     // GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     String userId, name; //name functionality not implemented yet
@@ -69,19 +74,25 @@ public class StartTrackerActivity extends AppCompatActivity implements View.OnCl
     boolean mRequestingLocationUpdates;
     String mLastUpdateTime;
     TextView t;
-    boolean isActivated, hasStarted = false;
+    boolean isActivated;
     List<Address> addressList;
     public final static String SLIDE_STATUS = "com.realtimeprojects.uccmobapp.STATUS";
 
-    Button messageButton;
+    Context context;
+
     boolean tracking;
-    TextView updated_location;
-    TextView updated_duration;
-    TextView updated_status;
-    Button updated_button;
+
+    TextView lblLocation;
+    TextView lblDuration;
+    TextView lblStatus;
+    ImageButton trackButton;
+    TextView lblSlideLeft;
 
     private float x1, x2;
     static final int MIN_DISTANCE = 150;
+    TimerTask checkTimeFunction, checkWorkingFunction;
+    Timer clockTimer;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -95,46 +106,51 @@ public class StartTrackerActivity extends AppCompatActivity implements View.OnCl
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        context = this;
 
-        messageButton = (Button) findViewById(R.id.btnMessages);
+        clockTimer = new Timer();
+        checkTimeFunction = new checkTimer();
 
-        messageButton.setOnClickListener(new View.OnClickListener() {
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+
+        lblLocation = (TextView) findViewById(R.id.txtAvailable);
+        lblDuration = (TextView) findViewById(R.id.txtDuration);
+        lblStatus = (TextView) findViewById(R.id.txtStatus);
+        lblSlideLeft = (TextView)findViewById(R.id.lblSlideForHelp);
+        trackButton = (ImageButton) findViewById(R.id.btnTrack);
+
+        trackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), Messages.class));
+            if (!isActivated) {
+                startTracking();
+            } else {
+                stopTracking();
+            }
             }
         });
 
-        updated_location = (TextView) findViewById(R.id.txtSuburb);
-        updated_duration = (TextView) findViewById(R.id.textView4);
-        updated_status = (TextView) findViewById(R.id.textView6);
-        updated_button = (Button) findViewById(R.id.button);
+        makeDialog();
 
-        updated_button.setOnClickListener(this);
-        //updateValuesFromBundle(savedInstanceState);
-        t = (TextView) findViewById(R.id.textView4);
         userId = getIntent().getStringExtra("userId");
-        //name = getIntent().getStringExtra("name");
         workingRef = new Firebase("https://ucc.firebaseio.com/users/" + userId + "/working");
-        // Create a GoogleApiClient instance
-
-        CheckWorking(); //needs to run every minute
-
-        alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setTitle("Reminder");
-        alertDialog.setMessage("Hey there!\nAre you working today?");
-        alertDialog.setPositiveButton("Yes", dialogClickListener);
-        alertDialog.setNegativeButton("No", dialogClickListener);
 
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        manageLocationUpdates(locationManager);
 
+        //need to ensure this only happens when coming from the emergency page
+        //overridePendingTransition(R.anim.fadeout, R.anim.fadein); //change to slide_in and out
 
+        checkWorking();
+    }
+
+    public void manageLocationUpdates(LocationManager locationManager) {
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, new android.location.LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 if (isActivated) {
                     updateLocation(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
-                    t.setText(String.valueOf(location.getLatitude()));
+                    lblLocation.setText(String.valueOf(location.getLatitude()));
                     getAddress(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
                 }
             }
@@ -146,25 +162,14 @@ public class StartTrackerActivity extends AppCompatActivity implements View.OnCl
 
             @Override
             public void onProviderEnabled(String provider) {
-                //getAddress(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+
             }
 
             @Override
             public void onProviderDisabled(String provider) {
-
+                lblLocation.setText("Unavailable");
             }
         });
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-    }
-
-    @Override
-    public void onClick(View v) {
-
-        Intent messaging = new Intent(this, Messages.class);
-        startActivity(messaging);
-
     }
 
     @Override
@@ -172,44 +177,62 @@ public class StartTrackerActivity extends AppCompatActivity implements View.OnCl
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 x1 = event.getX();
-                break;
+                return true;
             case MotionEvent.ACTION_UP:
                 x2 = event.getX();
                 float deltaX = x2 - x1;
                 if (Math.abs(deltaX) > MIN_DISTANCE) {
-                    Toast.makeText(this, "left2right swipe", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Emergency Mode Activated", Toast.LENGTH_SHORT).show();
                     emergencyMode();
-                } else {
-                    // consider as something else - a screen tap for example
                 }
-                break;
+                return true;
+            default:
+                return super.onTouchEvent(event);
         }
-        return super.onTouchEvent(event);
     }
 
+    public void makeDialog() {
+        alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Reminder");
+        alertDialog.setMessage("Hey there!\nAre you working today?");
+        alertDialog.setPositiveButton("Yes", dialogClickListener);
+        alertDialog.setNegativeButton("No", dialogClickListener);
+
+        alertDialog.setCancelable(false);
+        //might be another method required here when touching outside the dialog box
+    }
+
+    //CheckWorking(); //needs to run every minute
+
     public void startTracking() {
-        updated_button.setText("Turn Off");
-        updated_status.setText("Working");
+        trackButton.setBackgroundResource(R.drawable.go_offline_button);
+        lblLocation.setText("Finding location...");
+        lblStatus.setText("Working");
         tracking = true;
+        isActivated = true;
+        clockTimer.schedule(checkTimeFunction, 1000);
     }
 
     public void stopTracking() {
-        updated_button.setText("Start");
-        updated_duration.setText("00:00");
-        updated_location.setText("Unavailable");
-        updated_status.setText("At home");
+        trackButton.setBackgroundResource(R.drawable.start_button);
+        lblLocation.setText("Unavailable");
+        lblDuration.setText("00:00:00");
+        lblStatus.setText("Unspecified");
         tracking = false;
+        isActivated = false;
+        checkTimeFunction.cancel();
+        clockTimer.cancel();
     }
 
     public void emergencyMode() {
-        Intent intent = new Intent(this, EmergencyModule.class);        // INTENT TO CALL EMERGENCY MODULE ACTIVITY
+        Intent intent = new Intent(this, EmergencyModule.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.fadein, R.anim.fadeout); //change to slide_in and out
     }
 
     public void updateLocation(String lat, String lng) {
         final Firebase locationRef = new Firebase("https://ucc.firebaseio.com/coordinates/" + userId + "/");
 
-        //if your still want updates
         locationRef.child("lat").setValue(lat);
         locationRef.child("lng").setValue(lng);
     }
@@ -223,13 +246,9 @@ public class StartTrackerActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (item.getItemId() == R.id.chat_icon) {
+            Intent messaging = new Intent(this, Messages.class);
+            startActivity(messaging);
             return true;
         }
 
@@ -243,21 +262,18 @@ public class StartTrackerActivity extends AppCompatActivity implements View.OnCl
                 case DialogInterface.BUTTON_POSITIVE:
                     workingRef.setValue("Yes");
                     isActivated = true;
-                    updated_button.setText("Go Offline");
-                    //you can track, Google Maps bruh...
-                    //location will probably be moved to a separate hierarchy
+
                     break;
 
                 case DialogInterface.BUTTON_NEGATIVE:
                     workingRef.setValue("No");
                     isActivated = false;
-                    updated_button.setText("Start");
                     break;
             }
         }
     };
 
-    public void CheckWorking() {
+    public void checkWorking() {
         Calendar calendar = Calendar.getInstance();
         final int currentHour = calendar.get(Calendar.HOUR_OF_DAY); //you actually have to test this at some point, reset it once their done.
 
@@ -283,13 +299,12 @@ public class StartTrackerActivity extends AppCompatActivity implements View.OnCl
     public void getAddress(String lat, String lng) {
         Geocoder geoCoder = new Geocoder(StartTrackerActivity.this, Locale.getDefault());
 
-
         try {
 
             addressList = geoCoder.getFromLocation(Double.parseDouble(lat), Double.parseDouble(lng), 2);
             if ((addressList != null) && (addressList.size() > 0)) {
                 Address address = addressList.get(0);
-                updated_location.setText(address.getLocality());
+                lblLocation.setText(address.getLocality());
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -335,129 +350,28 @@ public class StartTrackerActivity extends AppCompatActivity implements View.OnCl
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
     }
-
-   /* public void startTracking(View view){
-        String location_value = "Ann Street"; //CURRENT VALUES ARE TEST CASE VALUES. VALUES TO BE RETRIEVED FROM DATABASE IN REAL TIME
-        String duration_value = "00:00";
-        String status_value = "At work";
-        String button_value = "Start";
-
-        if (!hasStarted) {
-
-        } else {
-            if (isActivated) {
-                isActivated = false;
-                updated_button.setText("Turn Off");
-            } else {
-                isActivated = true;
-                updated_button.setText("Start");
-            }
-        }
-
-
-
-
-    }*/
 }
 
-/*
-
-Sriram's original code
-
-package com.realtimeprojects.uccmobapp;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.TextView;
-
-public class StartTrackerActivity extends AppCompatActivity {
-    boolean tracking = false;                                   // FALSE INDICATES TRACKER IS NOT ACTIVE, CORRESPONDS TO INITIAL STATE
-    public final static String SLIDE_STATUS = "com.realtimeprojects.uccmobapp.STATUS";
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_start_tracker);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-
-    }
+class checkTimer extends TimerTask {
+    int seconds, minutes, hours;
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_start_tracker, menu);
-        return true;
-    }
+    public void run() {
+        seconds++;
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (seconds == 60) {
+            seconds = 0;
+            minutes++;
         }
 
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void startTracking(View view){
-        if(tracking == false) {
-            String location_value = "Ann Street"; //CURRENT VALUES ARE TEST CASE VALUES. VALUES TO BE RETRIEVED FROM DATABASE IN REAL TIME
-            String duration_value = "08:00";
-            String status_value = "At Work";
-            String button_value = "Go offline";
-
-            TextView updated_location = (TextView) findViewById(R.id.textView);
-            TextView updated_duration = (TextView) findViewById(R.id.textView4);
-            TextView updated_status = (TextView) findViewById(R.id.textView6);
-            Button updated_button = (Button) findViewById(R.id.button);
-
-            updated_location.setText(location_value);
-            updated_duration.setText(duration_value);
-            updated_status.setText(status_value);
-            updated_button.setText(button_value);
-            tracking = true;                                // TRUE INDICATES TRACKER IS ACTIVE, SET ACTIVE BY THE PRESS OF "START" BUTTON
-        }
-        else {
-            stopTracking(view);
-        }
+        if (minutes == 60) {
+            minutes = 0;
+            hours++;
         }
 
-    public void stopTracking(View view){
-        String location_value = "Home"; //CURRENT VALUES ARE TEST CASE VALUES. VALUES TO BE RETRIEVED FROM DATABASE IN REAL TIME
-        String duration_value = "00:00";
-        String status_value = "Off Duty";
-        String button_value = "Start";
+        if (hours == 24) {
+            //stop counting
 
-        TextView updated_location = (TextView) findViewById(R.id.textView);
-        TextView updated_duration = (TextView) findViewById(R.id.textView4 );
-        TextView updated_status = (TextView) findViewById(R.id.textView6);
-        Button updated_button = (Button)findViewById(R.id.button);
-
-        updated_location.setText(location_value);
-        updated_duration.setText(duration_value);
-        updated_status.setText(status_value);
-        updated_button.setText(button_value);
-        tracking = false;                                               // TRACKER DEACTIVATED
-    }                                                                   // THIS FUNCTION COULD ACTUALLY BE REMOVED UPON INTEGRATION WITH DATABASE, CURRENTLY USED START TRACKING FUNCTION
-                                                                        // CAN BE USED FOR BOTH STARTING AND STOPPING TRACKING ACTIVITY AND SHOULD BE RENAMED
-    public void emergencyMode(View view){
-        Intent intent = new Intent(this, EmergencyModule.class);        // INTENT TO CALL EMERGENCY MODULE ACTIVITY
-        startActivity(intent);
+        }
     }
 }
-
- */

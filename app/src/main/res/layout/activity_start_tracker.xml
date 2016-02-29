@@ -13,18 +13,9 @@
 
         <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
             android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary" app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:background="#8BC34A" app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start"
-        android:id="@+id/btnMessaging"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="101dp"
-        android:onClick="startTracking"/>
 
     <include layout="@layout/content_start_tracker" />
 
