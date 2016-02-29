@@ -227,7 +227,7 @@ public class StartTrackerActivity extends AppCompatActivity {
     public void emergencyMode() {
         Intent intent = new Intent(this, EmergencyModule.class);
         startActivity(intent);
-        overridePendingTransition(R.anim.fadein, R.anim.fadeout); //change to slide_in and out
+        //overridePendingTransition(R.anim.fadein, R.anim.fadeout); //change to slide_in and out
     }
 
     public void updateLocation(String lat, String lng) {
