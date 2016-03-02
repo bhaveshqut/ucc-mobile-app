@@ -108,15 +108,13 @@ public class StartTrackerActivity extends AppCompatActivity {
 
         context = this;
 
-        clockTimer = new Timer();
-        checkTimeFunction = new checkTimer();
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
-        lblLocation = (TextView) findViewById(R.id.txtAvailable);
-        lblDuration = (TextView) findViewById(R.id.txtDuration);
-        lblStatus = (TextView) findViewById(R.id.txtStatus);
-        lblSlideLeft = (TextView)findViewById(R.id.lblSlideForHelp);
+       // lblLocation = (TextView) findViewById(R.id.txtAvailable);
+      //  lblDuration = (TextView) findViewById(R.id.txtDuration);
+      //  lblStatus = (TextView) findViewById(R.id.txtStatus);
+      //  lblSlideLeft = (TextView)findViewById(R.id.lblSlideForHelp);
         trackButton = (ImageButton) findViewById(R.id.btnTrack);
 
         trackButton.setOnClickListener(new View.OnClickListener() {
@@ -187,7 +185,7 @@ public class StartTrackerActivity extends AppCompatActivity {
                 }
                 return true;
             default:
-                return super.onTouchEvent(event);
+                return false;
         }
     }
 
@@ -352,7 +350,7 @@ public class StartTrackerActivity extends AppCompatActivity {
     }
 }
 
-class checkTimer extends TimerTask {
+/*class checkTimer extends TimerTask {
     int seconds, minutes, hours;
 
     @Override
@@ -374,4 +372,4 @@ class checkTimer extends TimerTask {
 
         }
     }
-}
+}*/

@@ -13,37 +13,15 @@ import android.app.AlertDialog;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SmsManagement extends BroadcastReceiver {
+public class SMSManagement extends BroadcastReceiver {
 
-    static final String ACTION = "android.provider.Telephony.SMS_RECEIVED";
-    ArrayList<String> conversation;
-    MessagesAdapter messagesAdapter;
-    String managerPhone;
-
-    public SmsManagement(ArrayList<String> conversation, MessagesAdapter messagesAdapter, String managerPhone) {
-        conversation = this.conversation;
-        messagesAdapter = this.messagesAdapter;
-        managerPhone = this.managerPhone;
-    }
+    public static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals(ACTION)) {
-            StringBuilder buf = new StringBuilder();
-            Bundle bundle = intent.getExtras();
-            if (bundle != null) {
-                SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
-                for (int i = 0; i == messages.length; i++) {
-                    SmsMessage message = messages[i];
-                    String phNum = message.getDisplayOriginatingAddress();
-                    if (managerPhone.equals(phNum)) {
-                        AlertDialog.Builder a = new AlertDialog.Builder(context);
-                        a.setTitle(phNum);
-                        conversation.add(phNum);
-                        messagesAdapter.notifyDataSetChanged();
-                    }
-                }
-            }
+        if (SMS_RECEIVED.equals(intent.getAction())) {
+            this.abortBroadcast();
         }
     }
 }
+

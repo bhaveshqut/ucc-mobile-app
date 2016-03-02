@@ -1,5 +1,6 @@
 package ucc.com.safetyapplication;
 
+import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -53,40 +55,48 @@ public class Messages extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
-       //Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         btnSend = (Button) findViewById(R.id.btnSend);
         txtMessage = (TextView) findViewById(R.id.txtMessage);
 
         messages = new ArrayList<String>();
         lvMessages = (ListView)findViewById(R.id.lvMessages);
-        final MessagesAdapter messageAdapter = new MessagesAdapter(getApplicationContext(), messages);
-        lvMessages.setAdapter(messageAdapter);
+
+        lvMessages.setAdapter(new MessagesAdapter(getApplicationContext(), messages));
+        lvMessages.getAdapter().registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+            }
+        });
+
 
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (txtMessage.getText() == "") {
-                    Firebase phoneRef = new Firebase("https://ucc.firebaseio.com/" + managerId + "/ph/");
+                    if (txtMessage.getText() != "") {
+                        Firebase phoneRef = new Firebase("https://ucc.firebaseio.com/users/" + managerId + "/ph/");
 
-                    phoneRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                          @Override
-                          public void onDataChange(DataSnapshot snapshot) {
-                            String text = txtMessage.getText().toString();
-                            SmsManager.getDefault().sendTextMessage(snapshot.getValue().toString(), null,
-                                    String.valueOf(txtMessage.getText()), null, null);
-                            messages.add(text);
-                            messageAdapter.notifyDataSetChanged();
-                          }
+                        phoneRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot snapshot) {
+                                String text = txtMessage.getText().toString();
+                                SmsManager.getDefault().sendTextMessage(snapshot.getValue().toString(), null,
+                                        txtMessage.getText().toString(), null, null);
+                                messages.add(text);
+                                ((BaseAdapter) lvMessages.getAdapter()).notifyDataSetChanged();
+                            }
 
-                          @Override
-                          public void onCancelled(FirebaseError firebaseError) {
+                            @Override
+                            public void onCancelled(FirebaseError firebaseError) {
 
-                         }
-                    });
-                }
+                            }
+                        });
+                    }
             }
         });
     }
+
 }

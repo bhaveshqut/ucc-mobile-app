@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="ucc.com.safetyapplication.Messages">
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:fitsSystemWindows="true"
+    tools:context=".Messages">
+
+    <android.support.design.widget.AppBarLayout android:layout_height="wrap_content"
+        android:layout_width="match_parent" android:theme="@style/AppTheme.AppBarOverlay">
 
 
+
+        <android.support.v7.widget.Toolbar android:id="@+id/toolbar"
+            android:layout_width="match_parent" android:layout_height="?attr/actionBarSize"
+            android:background="#8BC34A" app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
 
 
     <LinearLayout
@@ -15,30 +24,27 @@
         android:weightSum="100"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/lblTitle"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:text="Hey, this'll be a menu"
-            android:textSize="35sp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:gravity="center"/>
-
         <ListView
             android:id="@+id/lvMessages"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="90"/>
+            android:layout_weight="90"
+            android:background="#9CCC65"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="10"
             android:orientation="horizontal"
-            android:weightSum="100">
+            android:weightSum="100"
+            android:background="#8BC34A">
 
-            <TextView
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="5"/>
+
+            <EditText
                 android:id="@+id/txtMessage"
                 android:layout_height="match_parent"
                 android:layout_width="0dp"
@@ -48,9 +54,10 @@
                 android:id="@+id/btnSend"
                 android:layout_height="match_parent"
                 android:layout_width="0dp"
-                android:layout_weight="20"/>
+                android:layout_weight="15"
+                android:background="@drawable/send_message"/>
 
         </LinearLayout>
     </LinearLayout>
 
-</LinearLayout>
+</android.support.design.widget.CoordinatorLayout>
