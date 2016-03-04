@@ -1,0 +1,6 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".StartTrackerActivity">
+    <item android:id="@+id/add_icon" android:title="Add Safety Alert" android:icon="@drawable/add_icon"
+        android:orderInCategory="100" app:showAsAction="always" />
+</menu>

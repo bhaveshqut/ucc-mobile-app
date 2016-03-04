@@ -17,4 +17,10 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="Theme.App.Base" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlNormal">#0D47A1</item>
+        <item name="colorControlActivated">#0D47A1</item>
+        <item name="colorControlHighlight">#0D47A1</item>
+    </style>
+
 </resources>

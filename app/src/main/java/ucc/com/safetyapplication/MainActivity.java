@@ -1,5 +1,7 @@
 package ucc.com.safetyapplication;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnLogin;
     Intent managerHome, workerHome;
     String userId, name;
+    AlertDialog.Builder loginAlert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +32,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Firebase.setAndroidContext(this);
 
-        managerHome = new Intent(this, manager_home.class);
-        workerHome = new Intent(this, StartTrackerActivity.class);// Not working...check imports...
+        managerHome = new Intent(this, SafetyAlert.class);
+        workerHome = new Intent(this, manager_home.class);// Not working...check imports...
     }
 
     @Override
@@ -48,6 +51,33 @@ public class MainActivity extends AppCompatActivity {
                 loginUser();
             }
         });
+    }
+
+    public void makeDialog() {
+        loginAlert = new AlertDialog.Builder(this);
+        loginAlert.setTitle("Error");
+        loginAlert.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        loginAlert.setCancelable(false);
+    }
+
+    public void setLoginFailed(FirebaseError firebaseError) {
+        loginAlert.setMessage(firebaseError.getMessage());
+        loginAlert.show();
+
+        //If you want to number the login attempts
+
+        /*if (loginAttempts < 5) {
+            loginAlert.show();
+            loginAttempts++;
+        } else {
+            loginAlert.setMessage("Exceeded amount of login attempts, please contact system administration.");
+            loginAlert.show();
+        }*/
     }
 
     public void loginUser() {
@@ -70,12 +100,9 @@ public class MainActivity extends AppCompatActivity {
 
                         switch (permission) {
                             case "M":
-                                System.out.println("Manager logging in");
-                                // Not working...check imports...
                                 startActivity(managerHome);
                                 break;
                             case "E":
-                                System.out.println("Employee logging in");
                                 workerHome.putExtra("userId", authData.getUid());
                                 startActivity(workerHome);
                                 break;
@@ -84,20 +111,14 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(FirebaseError firebaseError) {
-                        //Not needed yet.
+                        setLoginFailed(firebaseError);
                     }
                 });
             }
 
             @Override
             public void onAuthenticationError(FirebaseError firebaseError) {
-                // there was an error
-                if (loginAttempts < 5) {
-                    loginAttempts++;
-                    System.out.println("Failed login, try again...You have " + (5-loginAttempts+1) + "attempts before you are locked out");
-                } else {
-                    System.out.println("Exceeded amount of login attempts!");
-                }
+                setLoginFailed(firebaseError);
             }
         });
     }

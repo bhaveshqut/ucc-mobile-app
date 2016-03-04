@@ -42,9 +42,9 @@ class MessagesAdapter extends BaseAdapter {
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (view == null)
-            view = inflater.inflate(android.R.layout.simple_list_item_1, parent);
+            view = inflater.inflate(R.layout.message_adapter_text, parent);
 
-        TextView message = (TextView)view.findViewById(R.id.lblMessage);
+        TextView message = (TextView)view.findViewById(R.id.txtMessageSent);
         message.setText(messages.get(position));
 
         return view;

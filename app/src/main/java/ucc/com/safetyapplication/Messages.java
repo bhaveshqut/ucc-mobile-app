@@ -78,6 +78,7 @@ public class Messages extends AppCompatActivity {
             public void onClick(View v) {
                     if (txtMessage.getText() != "") {
                         Firebase phoneRef = new Firebase("https://ucc.firebaseio.com/users/" + managerId + "/ph/");
+                        final String phNum;
 
                         phoneRef.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -86,7 +87,9 @@ public class Messages extends AppCompatActivity {
                                 SmsManager.getDefault().sendTextMessage(snapshot.getValue().toString(), null,
                                         txtMessage.getText().toString(), null, null);
                                 messages.add(text);
-                                ((BaseAdapter) lvMessages.getAdapter()).notifyDataSetChanged();
+                                ((BaseAdapter) ((ListView)findViewById(R.id.lvMessages)).getAdapter()).notifyDataSetChanged();
+                                //((BaseAdapter) lvMessages.getAdapter()).notifyDataSetChanged();
+
                             }
 
                             @Override
@@ -94,6 +97,8 @@ public class Messages extends AppCompatActivity {
 
                             }
                         });
+
+
                     }
             }
         });

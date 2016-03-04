@@ -7,4 +7,6 @@
     <string name="title_start_tracker_activity">StartTraackerActivity</string>
     <string name="title_activity_messages">Messages</string>
     <string name="google_app_id">AIzaSyCWmxzE9bmjpYU5u6lFKSg-r7BIYeCr47Q</string>
+    <string name="title_activity_staff_management">StaffManagementActivity</string>
+    <string name="title_activity_safety_alert">SafetyAlert</string>
 </resources>
