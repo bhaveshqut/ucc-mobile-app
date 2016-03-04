@@ -13,26 +13,35 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SafetyAlert extends AppCompatActivity {
 
     String managerId = "1f0b0b84-538d-4134-91ad-6282f1f5afa3";
-    AlertDialog.Builder textAlert;
+
+    AlertDialog.Builder textAlert, errorAlert;
     Context context;
     LayoutInflater li;
     View promptsView;
+
+    ListView messageList;
     EditText input;
-    Button sendAlert, cancelSend;
+    Button sendAlert, cancelSend, sendText;
+
+    List<String> messages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,35 +49,63 @@ public class SafetyAlert extends AppCompatActivity {
         setContentView(R.layout.activity_safety_alert);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        context = this;
+        context = SafetyAlert.this;
 
         li = LayoutInflater.from(context);
         promptsView = li.inflate(R.layout.safety_alert_dialog, null);
 
-        input = (EditText)promptsView.findViewById(R.id.txtAlert);
+        messages = new ArrayList<String>();
 
-        //I had to break the rules here, make a negative action a positive one.
+        messageList = (ListView)findViewById(R.id.lvMessages);
+        input = (EditText)findViewById(R.id.txtMessage);
+        sendText = (Button)findViewById(R.id.btnSend);
 
+        sendText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendAlert();
+            }
+        });
 
-
-        textAlert = new AlertDialog.Builder(this);
+        textAlert = new AlertDialog.Builder(context);
         textAlert.setTitle("New Alert");
         textAlert.setView(promptsView);
+
+        //I had to break the rules here, make a negative action a positive one.
 
         textAlert.setNegativeButton("Send", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 sendAlert();
+                addAlertToList();
+                dialog.cancel();
             }
         });
 
         textAlert.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //Closes the dialog box
+                dialog.cancel();
+            }
+        });
+
+
+        messageList.setAdapter(new MessagesAdapter(context, messages));
+    }
+
+    public void makeErrorDialog(FirebaseError firebaseError) {
+        errorAlert = new AlertDialog.Builder(this);
+        errorAlert.setTitle("Error");
+        errorAlert.setMessage(firebaseError.getMessage());
+
+        errorAlert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
+
+        errorAlert.setCancelable(false);
     }
 
     @Override
@@ -82,17 +119,34 @@ public class SafetyAlert extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.add_icon) {
             textAlert.show();
-            return true;
         }
 
-        return super.onOptionsItemSelected(item);
+        return true;
+    }
+
+
+    public void addAlertToList() {
+
     }
 
     public void sendAlert() {
         final Firebase alertRef = new Firebase("https://ucc.firebaseio.com/alerts/" + managerId + "/");
 
-        Map<String, String> map = new HashMap<String, String>();
-        map.put(String.valueOf((int) System.currentTimeMillis()), input.getText().toString());
-        alertRef.push().setValue(map);
+        alertRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, String> map = new HashMap<String, String>();
+                map.put(String.valueOf((int) System.currentTimeMillis()), input.getText().toString());
+                alertRef.push().setValue(map);
+                messages.add(input.getText().toString());
+                ((BaseAdapter)messageList.getAdapter()).notifyDataSetChanged();
+                input.setText("");
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                makeErrorDialog(firebaseError);
+            }
+        });
     }
 }

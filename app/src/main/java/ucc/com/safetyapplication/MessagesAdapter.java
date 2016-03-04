@@ -6,13 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
 /**
  * Created by Damian on 22/02/2016.
  */
-class MessagesAdapter extends BaseAdapter {
+public class MessagesAdapter extends BaseAdapter {
     List<String> messages;
     Context context;
 
@@ -39,10 +40,11 @@ class MessagesAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        if (view == null)
-            view = inflater.inflate(R.layout.message_adapter_text, parent);
+        if (view == null) {
+            view = inflater.inflate(R.layout.message_adapter_text, parent, false);
+        }
 
         TextView message = (TextView)view.findViewById(R.id.txtMessageSent);
         message.setText(messages.get(position));

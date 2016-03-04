@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         Firebase.setAndroidContext(this);
 
         managerHome = new Intent(this, SafetyAlert.class);
-        workerHome = new Intent(this, manager_home.class);// Not working...check imports...
+        workerHome = new Intent(this, ManagerHome.class);
     }
 
     @Override

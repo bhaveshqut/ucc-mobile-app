@@ -29,14 +29,12 @@ public class ManagerHome extends AppCompatActivity implements View.OnClickListen
         switch (v.getId()) {
             case R.id.btnOne:
 
-                //Some piece of functionality
                 break;
             case R.id.btnTwo:
                 //Some piece of functionality
                 break;
             case R.id.btnThree:
                 startActivity(new Intent(this, SafetyAlert.class));
-                //Some piece of functionality
                 break;
         }
     }
