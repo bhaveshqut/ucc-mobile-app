@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Firebase.setAndroidContext(this);
 
-        managerHome = new Intent(this, SafetyAlert.class);
+        managerHome = new Intent(this, ManagerHome.class);
         workerHome = new Intent(this, ManagerHome.class);
     }
 

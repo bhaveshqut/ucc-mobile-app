@@ -8,16 +8,17 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Date;
 import java.util.List;
 
 /**
  * Created by Damian on 22/02/2016.
  */
 public class MessagesAdapter extends BaseAdapter {
-    List<String> messages;
+    List<Message> messages;
     Context context;
 
-    public MessagesAdapter(Context context, List<String> messages) {
+    public MessagesAdapter(Context context, List<Message> messages) {
         this.messages = messages;
         this.context = context;
     }
@@ -47,7 +48,14 @@ public class MessagesAdapter extends BaseAdapter {
         }
 
         TextView message = (TextView)view.findViewById(R.id.txtMessageSent);
-        message.setText(messages.get(position));
+        message.setText(messages.get(position).getMessage());
+
+        TextView time = (TextView)view.findViewById(R.id.txtTimeSent);
+
+        Long longDate = Long.valueOf(messages.get(position).getTime()).longValue();
+        String stringDate = new Date(longDate).toLocaleString();
+
+        time.setText(stringDate);
 
         return view;
     }

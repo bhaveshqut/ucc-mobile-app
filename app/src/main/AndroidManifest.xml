@@ -9,7 +9,6 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -49,7 +48,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".manager_home"
+            android:name=".ManagerHome"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_manager_home"
             android:screenOrientation="portrait"
@@ -72,13 +71,6 @@
             android:label="@string/title_activity_home"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".Messages"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="@string/title_activity_messages"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateVisible|adjustPan" />
         <!--
              ATTENTION: This was auto-generated to add Google Play services to your project for
              App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -90,16 +82,30 @@
         <activity
             android:name=".StaffManagementActivity"
             android:label="@string/title_activity_staff_management"
-            android:parentActivityName=".manager_home"
+            android:parentActivityName=".ManagerHome"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="ucc.com.safetyapplication.manager_home" />
+                android:value="ucc.com.safetyapplication.ManagerHome" />
         </activity>
         <activity
             android:name=".SafetyAlert"
             android:label="@string/title_activity_safety_alert"
+            android:parentActivityName=".StartTrackerActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".WorkerSafetyAlerts"
+            android:label="@string/title_activity_worker_safety_alerts"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".StaffStatus"
+            android:label="@string/title_activity_staff_status"
+            android:parentActivityName=".ManagerHome"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ucc.com.safetyapplication.ManagerHome" />
+        </activity>
     </application>
 
 </manifest>

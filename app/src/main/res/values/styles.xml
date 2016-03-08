@@ -21,6 +21,11 @@
         <item name="colorControlNormal">#0D47A1</item>
         <item name="colorControlActivated">#0D47A1</item>
         <item name="colorControlHighlight">#0D47A1</item>
+        <item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackground</item>
+    </style>
+
+    <style name="WindowTitleBackground">
+        <item name="android:background">#0000FF</item>
     </style>
 
 </resources>

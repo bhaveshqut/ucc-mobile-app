@@ -40,7 +40,7 @@ public class Messages extends AppCompatActivity {
 
     String userId = "c9c03565-e99c-4318-91d8-cb44bca1bc64", managerId = "1f0b0b84-538d-4134-91ad-6282f1f5afa3";
 
-    List<String> messages;
+    List<Message> messages;
 
     Button btnSend;
     ListView lvMessages;
@@ -61,10 +61,10 @@ public class Messages extends AppCompatActivity {
         btnSend = (Button) findViewById(R.id.btnSend);
         txtMessage = (TextView) findViewById(R.id.txtMessage);
 
-        messages = new ArrayList<String>();
+        messages = new ArrayList<Message>();
         lvMessages = (ListView)findViewById(R.id.lvMessages);
 
-        lvMessages.setAdapter(new MessagesAdapter(getApplicationContext(), messages));
+        lvMessages.setAdapter(new MessagesAdapter(Messages.this, messages));
         lvMessages.getAdapter().registerDataSetObserver(new DataSetObserver() {
             @Override
             public void onChanged() {
@@ -72,8 +72,7 @@ public class Messages extends AppCompatActivity {
             }
         });
 
-
-        btnSend.setOnClickListener(new View.OnClickListener() {
+       /* btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                     if (txtMessage.getText() != "") {
@@ -101,7 +100,7 @@ public class Messages extends AppCompatActivity {
 
                     }
             }
-        });
+        });*/
     }
 
 }

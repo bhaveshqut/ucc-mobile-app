@@ -11,4 +11,12 @@
         android:textSize="20sp"
         android:text="hey"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="right"
+        android:id="@+id/txtTimeSent"
+        android:textSize="20sp"
+        android:text="Date"/>
+
 </LinearLayout>

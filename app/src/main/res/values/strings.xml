@@ -9,4 +9,6 @@
     <string name="google_app_id">AIzaSyCWmxzE9bmjpYU5u6lFKSg-r7BIYeCr47Q</string>
     <string name="title_activity_staff_management">StaffManagementActivity</string>
     <string name="title_activity_safety_alert">SafetyAlert</string>
+    <string name="title_activity_worker_safety_alerts">WorkerSafetyAlerts</string>
+    <string name="title_activity_staff_status">StaffStatus</string>
 </resources>

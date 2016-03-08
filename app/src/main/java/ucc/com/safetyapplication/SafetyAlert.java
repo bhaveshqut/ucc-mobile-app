@@ -1,9 +1,11 @@
 package ucc.com.safetyapplication;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,9 +15,13 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.firebase.client.DataSnapshot;
@@ -24,6 +30,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,12 +43,14 @@ public class SafetyAlert extends AppCompatActivity {
     Context context;
     LayoutInflater li;
     View promptsView;
+    String userType;
 
     ListView messageList;
     EditText input;
     Button sendAlert, cancelSend, sendText;
+    LinearLayout enterAlert, messagesLayout;
 
-    List<String> messages;
+    List<Message> messages = new ArrayList<Message>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,16 +58,25 @@ public class SafetyAlert extends AppCompatActivity {
         setContentView(R.layout.activity_safety_alert);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+
+
+
         context = SafetyAlert.this;
+
+        userType = "E";
 
         li = LayoutInflater.from(context);
         promptsView = li.inflate(R.layout.safety_alert_dialog, null);
 
-        messages = new ArrayList<String>();
 
+        enterAlert = (LinearLayout)findViewById(R.id.enterAlert);
         messageList = (ListView)findViewById(R.id.lvMessages);
         input = (EditText)findViewById(R.id.txtMessage);
         sendText = (Button)findViewById(R.id.btnSend);
+        messagesLayout = (LinearLayout)findViewById(R.id.messagesLayout);
 
         sendText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,8 +107,43 @@ public class SafetyAlert extends AppCompatActivity {
             }
         });
 
-
         messageList.setAdapter(new MessagesAdapter(context, messages));
+    }
+
+    public void showMessages() {
+        Firebase h = new Firebase("https://ucc.firebaseio.com/alerts/" + managerId + "/");
+
+        h.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot smallShot : dataSnapshot.getChildren()) {
+                    messages.add(smallShot.getValue(Message.class));
+                }
+
+                ((BaseAdapter) messageList.getAdapter()).notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
+            }
+        });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (userType == "E") {
+            ((ViewManager) enterAlert.getParent()).removeView(enterAlert);
+
+            ViewGroup.LayoutParams params = messagesLayout.getLayoutParams();
+            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+
+        }
+
+        showMessages();
+
     }
 
     public void makeErrorDialog(FirebaseError firebaseError) {
@@ -111,19 +164,19 @@ public class SafetyAlert extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_safety_alert, menu);
+        //getMenuInflater().inflate(R.menu.menu_safety_alert, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.add_icon) {
-            textAlert.show();
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                startActivity(new Intent(context, ManagerHome.class));
         }
 
         return true;
     }
-
 
     public void addAlertToList() {
 
@@ -135,12 +188,15 @@ public class SafetyAlert extends AppCompatActivity {
         alertRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, String> map = new HashMap<String, String>();
+                Map<String, String> map = new HashMap<>();
                 map.put(String.valueOf((int) System.currentTimeMillis()), input.getText().toString());
                 alertRef.push().setValue(map);
-                messages.add(input.getText().toString());
+                messages.add(new Message(input.getText().toString(), String.valueOf(System.currentTimeMillis())));
                 ((BaseAdapter)messageList.getAdapter()).notifyDataSetChanged();
                 input.setText("");
+
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(input.getWindowToken(), 0);
             }
 
             @Override
