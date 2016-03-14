@@ -96,15 +96,35 @@
         <activity
             android:name=".WorkerSafetyAlerts"
             android:label="@string/title_activity_worker_safety_alerts"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".StaffStatus"
             android:label="@string/title_activity_staff_status"
             android:parentActivityName=".ManagerHome"
             android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="ucc.com.safetyapplication.ManagerHome" />
+        </activity>
+        <activity
+            android:name=".testttt"
+            android:label="@string/title_activity_testttt"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".StaffLookup"
+            android:label="@string/title_activity_staff_lookup"
+            android:parentActivityName=".StaffManagementActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="ucc.com.safetyapplication.StaffManagementActivity" />
         </activity>
     </application>
 

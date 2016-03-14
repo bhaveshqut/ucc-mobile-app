@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         Firebase.setAndroidContext(this);
 
         managerHome = new Intent(this, ManagerHome.class);
-        workerHome = new Intent(this, ManagerHome.class);
+        workerHome = new Intent(this, StartTrackerActivity.class);
     }
 
     @Override

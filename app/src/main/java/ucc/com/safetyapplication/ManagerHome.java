@@ -26,12 +26,24 @@ public class ManagerHome extends AppCompatActivity {
         staffManagement = (Button)findViewById(R.id.btnTwo);
         sendSafetyAlert = (Button)findViewById(R.id.btnThree);
 
+        staffStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ManagerHome.this, StaffStatus.class));
+            }
+        });
+
+        staffManagement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ManagerHome.this, StaffManagementActivity.class));
+            }
+        });
+
         sendSafetyAlert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(ManagerHome.this, SafetyAlert.class));
-
-
             }
         });
     }

@@ -3,14 +3,19 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">#F44336</item>
+        <item name="colorPrimaryDark">#C62828</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">#B0382B</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -18,14 +23,15 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="Theme.App.Base" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorControlNormal">#0D47A1</item>
-        <item name="colorControlActivated">#0D47A1</item>
-        <item name="colorControlHighlight">#0D47A1</item>
+        <item name="colorControlNormal">#B0382B</item>
+        <item name="colorControlActivated">#B0382B</item>
+        <item name="colorControlHighlight">#B0382B</item>
         <item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackground</item>
     </style>
 
     <style name="WindowTitleBackground">
-        <item name="android:background">#0000FF</item>
+        <item name="android:background">#4F5020</item>
+        <item name="android:textColor">#FFFFFF</item>
     </style>
 
 </resources>

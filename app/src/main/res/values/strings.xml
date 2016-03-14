@@ -11,4 +11,6 @@
     <string name="title_activity_safety_alert">SafetyAlert</string>
     <string name="title_activity_worker_safety_alerts">WorkerSafetyAlerts</string>
     <string name="title_activity_staff_status">StaffStatus</string>
+    <string name="title_activity_testttt">testttt</string>
+    <string name="title_activity_staff_lookup">StaffLookup</string>
 </resources>
