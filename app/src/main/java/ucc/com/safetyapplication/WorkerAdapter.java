@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,10 +19,12 @@ public class WorkerAdapter extends BaseAdapter {
     List<Worker> workers;
     Context context;
     List<String> chosenWorkers;
+    boolean positionsNeeded;
 
     public WorkerAdapter(Context context, List<Worker> workers, boolean positionsNeeded) {
         this.workers = workers;
         this.context = context;
+        this.positionsNeeded = positionsNeeded;
 
         if (positionsNeeded) {
             chosenWorkers = new ArrayList<>();
@@ -65,6 +68,12 @@ public class WorkerAdapter extends BaseAdapter {
 
         TextView phNumber = (TextView)view.findViewById(R.id.workerPhoneNumber);
         phNumber.setText(workers.get(position).getPhoneNumber());
+
+        CheckBox chosenWorker = (CheckBox)view.findViewById(R.id.chkChooseWorker);
+
+        if (!positionsNeeded) {
+            chosenWorker.setVisibility(View.INVISIBLE);
+        }
 
         return view;
     }

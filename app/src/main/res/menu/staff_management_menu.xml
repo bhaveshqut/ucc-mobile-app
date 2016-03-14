@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".StaffManagementActivity">
+    <item android:id="@+id/add_icon" android:title="Delete Worker" android:icon="@drawable/clear_icon"
+        android:orderInCategory="100" app:showAsAction="always" />
 </menu>

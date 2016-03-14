@@ -2,6 +2,7 @@ package ucc.com.safetyapplication;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -44,31 +46,32 @@ public class StaffManagementActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        addWorkers = (FloatingActionButton)findViewById(R.id.fab);
+        getWorkers();
+
+        addWorkers = (FloatingActionButton)findViewById(R.id.addWorkers);
 
         managerId = "1f0b0b84-538d-4134-91ad-6282f1f5afa3";
         alertDialog = setupErrorDialog();
 
-        addWorkerButton = (Button)findViewById(R.id.btnAddWorkers);
         workersListView = (ListView)findViewById(R.id.lvWorkersToManage);
         workersList = new ArrayList<>();
-        workersListView.setAdapter(new WorkerAdapter(StaffManagementActivity.this, workersList, true));
+        workersListView.setAdapter(new WorkerAdapter(StaffManagementActivity.this, workersList, false));
 
         addWorkers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+                startActivity(new Intent(StaffManagementActivity.this, StaffLookup.class));
             }
         });
 
-        addWorkerButton.setOnClickListener(new View.OnClickListener() {
+        /*addWorkerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addWorkers();
             }
-        });
+        });*/
 
         workersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -92,8 +95,47 @@ public class StaffManagementActivity extends AppCompatActivity {
         });
     }
 
-    public void getPeople() {
+    public void getWorkers() {
+        final Firebase workersRef = new Firebase("https://ucc.firebaseio.com/");
 
+
+        workersRef.child("users/").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+
+                for (final DataSnapshot s : dataSnapshot.getChildren()) {
+
+
+
+                    workersRef.child("pairs/" + s.getKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot2) {
+
+                            if (s.child("name").exists() && s.child("phNumber").exists() && s.child("employeeId").exists()
+                                    && s.child("inDanger").exists()) {
+                                workersList.add(new Worker(s.child("name").getValue().toString(), s.child("phNumber").getValue().toString(),
+                                        s.child("employeeId").getValue().toString(), (boolean)s.child("inDanger").getValue()));
+
+                            }
+
+                            ((BaseAdapter) ((ListView)findViewById(R.id.lvWorkersToManage)).getAdapter()).notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {
+                            int i = 0;
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                int ij = 11;
+            }
+        });
     }
 
     public AlertDialog.Builder setupErrorDialog() {

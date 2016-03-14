@@ -53,7 +53,7 @@ public class StaffStatus extends AppCompatActivity {
 
         txtWorkerCount = (TextView)findViewById(R.id.txtWorkerCount);
 
-        lvWorkers = (ListView)findViewById(R.id.lvWorkers);
+        lvWorkers = (ListView)findViewById(R.id.lvWorkersToManage);
         lvWorkers.setAdapter(new WorkerAdapter(StaffStatus.this, workers, true));
 
         getWorkers();

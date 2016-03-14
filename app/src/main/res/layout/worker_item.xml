@@ -5,7 +5,8 @@
     android:paddingTop="10dp"
     android:paddingBottom="10dp"
     android:paddingLeft="10dp"
-    android:weightSum="100">
+    android:weightSum="100"
+    android:gravity="center_vertical">
 
     <LinearLayout
         android:layout_width="0dp"
@@ -43,8 +44,13 @@
             android:text="0500 000 000"
             android:paddingRight="15dp"
             android:textSize="15sp"
-            android:id="@+id/workerPhoneNumber"/>
+            android:id="@+id/workerPhoneNumber" />
 
         </LinearLayout>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/chkChooseWorker" />
 
 </LinearLayout>
