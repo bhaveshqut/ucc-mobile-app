@@ -2,6 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".StaffManagementActivity">
-    <item android:id="@+id/search_icon" android:title="Add Worker" android:icon="@drawable/search"
+    <item android:id="@+id/delete_icon" android:title="Delete Worker" android:icon="@drawable/clear_icon"
         android:orderInCategory="100" app:showAsAction="always" />
 </menu>

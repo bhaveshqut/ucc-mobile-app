@@ -28,6 +28,8 @@ public class StaffLookup extends AppCompatActivity {
         return true;
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.drawable.clear_icon) {
