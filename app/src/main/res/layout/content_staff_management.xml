@@ -16,9 +16,36 @@
     android:id="@+id/fabAddWorkers">
 
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <EditText
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:id="@+id/medittext" />
+
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+
+            android:id="@+id/btnmsearch"
+
+            android:layout_gravity="right"
+            android:background="@drawable/search" />
+
+    </LinearLayout>
+
+
+
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="490dp"
         android:id="@+id/lvWorkersToManage"/>
 
 </LinearLayout>
